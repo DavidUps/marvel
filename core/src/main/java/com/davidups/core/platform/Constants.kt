@@ -3,6 +3,7 @@ package com.davidups.core.platform
 object Constants {
     object Error {
         const val SERVER_ERROR = "server error"
+        const val DATABASE_ERROR = "database error"
     }
 
     object Core {
