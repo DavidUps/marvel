@@ -4,7 +4,7 @@ import com.davidups.characters.data.models.CharactersEntity
 import com.davidups.core.exception.Failure
 import com.davidups.core.functional.Either
 
-interface CharactersDataSource {
+interface CharactersDataSourceService {
 
-    suspend fun getCharacters(fromPagination: Boolean): Either<Failure, CharactersEntity>
+    suspend fun getCharacters(fromPagination: Boolean, offset: Int): Either<Failure, CharactersEntity>
 }

@@ -1,6 +1,6 @@
 package com.davidups.characters.domain.repository
 
-import com.davidups.characters.data.datasource.CharactersDataSource
+import com.davidups.characters.data.datasource.CharactersDataSourceService
 import com.davidups.characters.data.models.mockCharactersData
 import com.davidups.characters.domain.models.toDomain
 import com.davidups.core.exception.Failure
@@ -18,7 +18,7 @@ import org.mockito.kotlin.whenever
 class CharactersRepositoryImpTest {
 
     @Mock
-    private lateinit var mockCharactersDataSource: CharactersDataSource
+    private lateinit var mockCharactersDataSource: CharactersDataSourceService
 
     private lateinit var charactersRepositoryImp: CharactersRepositoryImp
 
