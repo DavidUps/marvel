@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">PokeCompose</string>
+    <string name="character_image">Character Image</string>
+    <string name="internet_error">Something went wrong</string>
+    <string name="get_characters_error">Something went wrong</string>
+    <string name="see_more">See more</string>
+    <string name="see_less">See less</string>
+</resources>
