@@ -15,6 +15,11 @@ import com.davidups.marvel.ui.features.character.models.CharactersEvent
 import com.davidups.marvel.ui.features.character.models.CharactersState
 import com.davidups.marvel.ui.features.character.models.toView
 import com.davidups.marvel.R
+import com.davidups.marvel.core.navigation.NavControllerWrapper
+import com.davidups.marvel.core.navigation.NavControllerWrapper.navController
+import com.davidups.marvel.core.navigation.Screen
+import com.davidups.marvel.ui.features.character.models.CharacterDetailNavArgs
+import com.davidups.marvel.ui.features.character.models.CharacterView
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -25,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CharactersViewModel @Inject constructor(
-    private val getCharacters: GetCharacterUseCase
+    private val getCharacters: GetCharacterUseCase,
 ) : ViewModel() {
 
     private var getCharactersJob: Job? = null
@@ -46,33 +51,36 @@ class CharactersViewModel @Inject constructor(
     private fun getCharacters(fromPagination: Boolean) {
         getCharactersJob.cancelIfActive()
         getCharactersJob = viewModelScope.launch {
-            getCharacters.invoke(fromPagination)
-                .onStart {
-                    state = state.copy(isLoading = true)
+            getCharacters.invoke(fromPagination).onStart {
+                state = state.copy(isLoading = true)
+            }.onCompletion {
+                state = state.copy(isLoading = false)
+            }.catch { throwable ->
+                Log.e("CharactersViewModel", "getCharacters catch: ${throwable.message}")
+                state = state.copy(error = R.string.get_characters_error)
+            }.collect { result ->
+                result.onFailure { failure ->
+                    Log.e("CharactersViewModel", "getCharacters collect error: ${failure}")
+                    state = state.copy(
+                        error = when (failure) {
+                            is Failure.ServerError, is Failure.Throwable, is Failure.CustomError -> R.string.get_characters_error
+
+                            Failure.NetworkConnection -> R.string.internet_error
+                        }
+                    )
                 }
-                .onCompletion {
-                    state = state.copy(isLoading = false)
+                result.onSuccess { characters ->
+                    state = state.copy(characters = characters.toView())
                 }
-                .catch { throwable ->
-                    Log.e("CharactersViewModel", "getCharacters catch: ${throwable.message}")
-                    state = state.copy(error = R.string.get_characters_error)
-                }
-                .collect { result ->
-                    result.onFailure { failure ->
-                        Log.e("CharactersViewModel", "getCharacters collect error: ${failure}")
-                        state = state.copy(
-                            error = when (failure) {
-                                is Failure.ServerError,
-                                is Failure.Throwable,
-                                is Failure.CustomError -> R.string.get_characters_error
-                                Failure.NetworkConnection -> R.string.internet_error
-                            }
-                        )
-                    }
-                    result.onSuccess { characters ->
-                        state = state.copy(characters = characters.toView())
-                    }
-                }
+            }
         }
+    }
+
+    fun navigateToDetail(character: CharacterView) {
+        navController?.navigate(
+            Screen.CharacterDetail.createRoute(
+                CharacterDetailNavArgs(character)
+            )
+        )
     }
 }
