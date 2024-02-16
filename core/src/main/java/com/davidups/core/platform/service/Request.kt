@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class Request @Inject constructor(private val networkHandler: NetworkHandler) {
 
-    fun <T> launch(call: Response<T>): Either<Failure, T> = if (networkHandler.isConnected) {
+    fun <T> launch(call: Response<T>): Either<Failure, T> = if (networkHandler.hasInternetConnection()) {
         call.runCatching {
             if (this.isSuccessful && this.body() != null) {
                 Either.Right(this.body()!!)
