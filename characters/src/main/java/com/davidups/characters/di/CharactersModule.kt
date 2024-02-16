@@ -1,7 +1,5 @@
 package com.davidups.characters.di
 
-import android.content.Context
-import androidx.room.Room
 import com.davidups.characters.data.datasource.CharactersDataSourceLocal
 import com.davidups.characters.data.datasource.CharactersDataSourceLocalImp
 import com.davidups.characters.data.datasource.CharactersDataSourceService
@@ -19,7 +17,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 import retrofit2.Retrofit
@@ -32,15 +29,6 @@ object DataModule {
     @Singleton
     fun provideCharacterDao(database: CharactersDatabase): CharactersDAO =
         database.characterDao()
-
-    @Provides
-    @Singleton
-    fun provideCharacterDataBase(@ApplicationContext context: Context): CharactersDatabase =
-        Room.databaseBuilder(
-            context = context,
-            klass = CharactersDatabase::class.java,
-            name = "Constants.Characters.DATABASE_NAME"
-        ).build()
 
     @Provides
     @Singleton
