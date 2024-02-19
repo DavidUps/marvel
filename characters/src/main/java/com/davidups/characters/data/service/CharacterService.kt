@@ -1,6 +1,6 @@
 package com.davidups.characters.data.service
 
-import com.davidups.characters.data.models.CharactersEntity
+import com.davidups.characters.data.service.models.CharactersServiceEntity
 import com.davidups.core.exception.Failure
 import com.davidups.core.functional.Either
 import com.davidups.core.platform.BaseResponse
@@ -15,7 +15,7 @@ class CharacterService @Inject constructor(
     suspend fun getCharacters(
         limit: Int?,
         offset: Int?
-    ): Either<Failure, BaseResponse<CharactersEntity>> =
+    ): Either<Failure, BaseResponse<CharactersServiceEntity>> =
         request.launch(characterApi.getCharacters(limit, offset))
 
     suspend fun getCharacter(id: String?) = request.launch(characterApi.getCharacter(id))

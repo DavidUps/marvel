@@ -1,19 +1,19 @@
-package com.davidups.characters.data.models
+package com.davidups.characters.data.service.models
 
-import com.davidups.characters.data.local.model.CharactersLocalEntity
+import com.davidups.characters.data.models.CharactersEntity
 import com.davidups.core.extensions.empty
 
-data class CharactersEntity(
+data class CharactersServiceEntity(
     val id: Int?,
     var offset: Int?,
     val limit: Int?,
     val total: Int?,
     val count: Int?,
-    var results: MutableList<CharacterEntity>?
+    var results: MutableList<CharacterServiceEntity>?
 ) {
     companion object {
         fun empty() =
-            CharactersEntity(
+            CharactersServiceEntity(
                 Int.empty(),
                 Int.empty(),
                 Int.empty(),
@@ -24,11 +24,12 @@ data class CharactersEntity(
     }
 }
 
-fun CharactersEntity.toCharactersLocalEntity() = CharactersLocalEntity(
+fun CharactersServiceEntity.toCharactersEntity() = CharactersEntity(
     id = id,
     offset = offset,
     limit = limit,
     total = total,
     count = count,
-    results = results?.map { it.toCharacterLocalEntity() }?.toMutableList()
+    results = results?.map { it.toCharacterEntity() }?.toMutableList()
 )
+

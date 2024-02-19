@@ -1,7 +1,7 @@
 package com.davidups.characters.data.service
 
-import com.davidups.characters.data.models.CharacterEntity
-import com.davidups.characters.data.models.CharactersEntity
+import com.davidups.characters.data.service.models.CharacterServiceEntity
+import com.davidups.characters.data.service.models.CharactersServiceEntity
 import com.davidups.core.platform.BaseResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -19,8 +19,8 @@ interface CharacterApi {
     suspend fun getCharacters(
         @Query("limit") limit: Int? = 10,
         @Query("offset") offset: Int? = 0
-    ): Response<BaseResponse<CharactersEntity>>
+    ): Response<BaseResponse<CharactersServiceEntity>>
 
     @GET(CHARACTER)
-    suspend fun getCharacter(@Path("characterId") id: String?): Response<BaseResponse<CharacterEntity>>
+    suspend fun getCharacter(@Path("characterId") id: String?): Response<BaseResponse<CharacterServiceEntity>>
 }

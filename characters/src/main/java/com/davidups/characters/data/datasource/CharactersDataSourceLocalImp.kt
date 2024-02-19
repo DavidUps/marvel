@@ -1,8 +1,7 @@
 package com.davidups.characters.data.datasource
 
 import com.davidups.characters.data.local.CharacterLocal
-import com.davidups.characters.data.models.CharactersEntity
-import com.davidups.characters.data.service.CharacterService
+import com.davidups.characters.data.local.model.CharactersLocalEntity
 import com.davidups.core.exception.Failure
 import com.davidups.core.extensions.orEmpty
 import com.davidups.core.functional.Either
@@ -21,7 +20,7 @@ class CharactersDataSourceLocalImp @Inject constructor(
         Either.Left(error = Failure.Throwable(it))
     }
 
-    override suspend fun saveCharacters(characters: CharactersEntity) {
+    override suspend fun saveCharacters(characters: CharactersLocalEntity) {
         val getCharactersLocal = local.getCharacters()
         getCharactersLocal?.let {
             it.offset = it.offset?.plus(Constants.Characters.LIMIT)
