@@ -30,5 +30,5 @@ fun CharacterEntity.toCharacterLocalEntity() = CharacterLocalEntity(
     description = description,
     modified = modified,
     resourceURI = resourceURI,
-    thumbnail = thumbnail?.toCharacterLocalEntity()
+    thumbnail = thumbnail?.toCharacterThumbnailLocalEntity()
 )

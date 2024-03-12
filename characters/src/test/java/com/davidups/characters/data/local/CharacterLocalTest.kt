@@ -1,7 +1,7 @@
 package com.davidups.characters.data.local
 
 import com.davidups.characters.data.local.dao.CharactersDAO
-import com.davidups.characters.data.models.mockCharactersData
+import com.davidups.characters.data.models.mockCharactersLocalData
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -27,7 +27,7 @@ class CharacterLocalTest {
 
     @Test
     fun `putCharacters calls insert on DAO`() = runBlocking {
-        val characters = mockCharactersData()
+        val characters = mockCharactersLocalData()
 
         characterLocal.putCharacters(characters)
 
@@ -36,7 +36,7 @@ class CharacterLocalTest {
 
     @Test
     fun `updateCharacters calls getCharacters on DAO`() = runBlocking {
-        val characters = mockCharactersData()
+        val characters = mockCharactersLocalData()
 
         characterLocal.updateCharacters(characters)
 
@@ -45,11 +45,11 @@ class CharacterLocalTest {
 
     @Test
     fun `getCharacters calls getCharacters on DAO`() = runBlocking {
-        whenever(mockCharactersDAO.getCharacters()).thenReturn(mockCharactersData())
+        whenever(mockCharactersDAO.getCharacters()).thenReturn(mockCharactersLocalData())
 
         val result = mockCharactersDAO.getCharacters()
 
-        assertEquals(mockCharactersData(), result)
+        assertEquals(mockCharactersLocalData(), result)
     }
 
     @Test

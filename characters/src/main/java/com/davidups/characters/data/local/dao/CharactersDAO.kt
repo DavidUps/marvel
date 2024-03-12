@@ -3,7 +3,6 @@ package com.davidups.characters.data.local.dao
 import androidx.room.Dao
 import androidx.room.Query
 import com.davidups.characters.data.local.model.CharactersLocalEntity
-import com.davidups.characters.data.models.CharactersEntity
 import com.davidups.core.platform.BaseDao
 
 @Dao

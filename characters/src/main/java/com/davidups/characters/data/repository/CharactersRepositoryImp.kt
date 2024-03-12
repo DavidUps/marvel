@@ -26,7 +26,6 @@ class CharactersRepositoryImp @Inject constructor(
             is Either.Left -> {
                 Either.Left(error = charactersLocal.error)
             }
-
             is Either.Right -> {
                 if (fromPagination.not()) {
                     charactersLocal.success?.let {
@@ -62,7 +61,7 @@ class CharactersRepositoryImp @Inject constructor(
             Either.Left(error = Failure.Throwable(it))
         }
 
-    private suspend fun calculateOffset(): Int = runCatching {
+    suspend fun calculateOffset(): Int = runCatching {
         when (val offset = local.getOffset()) {
             is Either.Left -> Int.empty()
             is Either.Right -> offset.success.orEmpty()
