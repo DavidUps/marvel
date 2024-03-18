@@ -8,6 +8,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -23,9 +26,14 @@ import com.davidups.marvel.ui.features.character.models.CharacterView
 @Composable
 fun CharacterDetail(item: CharacterView) {
 
+    val character by remember {
+        mutableStateOf(item)
+    }
+
     Column {
         AsyncImage(
-            ImageRequest.Builder(LocalContext.current).data(item.image).crossfade(true).build(),
+            ImageRequest.Builder(LocalContext.current).data(character.image).crossfade(true)
+                .build(),
             stringResource(R.string.character_image),
             Modifier
                 .fillMaxWidth()
@@ -40,7 +48,7 @@ fun CharacterDetail(item: CharacterView) {
                 start = 8.dp,
                 end = 8.dp
             ),
-            text = item.name,
+            text = character.name,
             style = MaterialTheme.typography.headlineMedium,
         )
 
@@ -50,10 +58,8 @@ fun CharacterDetail(item: CharacterView) {
                 start = 8.dp,
                 end = 8.dp
             ),
-            text = item.description,
+            text = character.description,
             style = MaterialTheme.typography.bodyMedium,
         )
     }
-
-
 }

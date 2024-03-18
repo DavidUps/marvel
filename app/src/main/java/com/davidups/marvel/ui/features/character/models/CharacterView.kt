@@ -16,19 +16,7 @@ data class CharacterView(
     val modified: String?,
     val resourceURI: String,
     val image: String
-) : Parcelable {
-    companion object {
-        fun empty() =
-            CharacterView(
-                Int.empty(),
-                String.empty(),
-                String.empty(),
-                null,
-                String.empty(),
-                String.empty()
-            )
-    }
-}
+) : Parcelable
 
 fun Character.toView() =
     CharacterView(

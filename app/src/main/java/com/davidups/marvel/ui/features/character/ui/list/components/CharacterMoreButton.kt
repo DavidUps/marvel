@@ -46,7 +46,10 @@ fun CharacterMoreButton(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
             ) {
-                AnimatedContent(targetState = buttonText, label = buttonText) {
+                AnimatedContent(
+                    targetState = buttonText,
+                    label = buttonText
+                ) {
                     Text(text = it)
                 }
             }

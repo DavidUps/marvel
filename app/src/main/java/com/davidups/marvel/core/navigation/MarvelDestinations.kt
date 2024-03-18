@@ -10,6 +10,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.davidups.marvel.core.navigation.NavList.CHARACTER_DETAIL
+import com.davidups.marvel.core.navigation.NavList.CHARACTER_LIST
 import com.davidups.marvel.ui.features.character.models.CharacterDetailNavArgs
 import com.davidups.marvel.ui.features.character.ui.detail.CharacterDetail
 import com.davidups.marvel.ui.features.character.ui.list.CharactersList
@@ -44,10 +46,10 @@ fun MarvelNavigation(
 }
 
 sealed class Screen(val route: String) {
-    data object CharacterList : Screen("characterList")
-    data object CharacterDetail : Screen("characterDetail/{${NavArgs.ITEM_ID.key}}") {
+    data object CharacterList : Screen(CHARACTER_LIST)
+    data object CharacterDetail : Screen("$CHARACTER_DETAIL/{${NavArgs.ITEM_ID.key}}") {
         fun createRoute(item: CharacterDetailNavArgs): String =
-            "characterDetail/${Uri.encode(Json.encodeToJsonElement(item).toString())}"
+            "$CHARACTER_DETAIL/${Uri.encode(Json.encodeToJsonElement(item).toString())}"
     }
 }
 
@@ -67,4 +69,9 @@ val itemNavType = object : NavType<CharacterDetailNavArgs>(isNullableAllowed = f
     override fun put(bundle: Bundle, key: String, value: CharacterDetailNavArgs) {
         bundle.putParcelable(key, value)
     }
+}
+
+object NavList {
+    const val CHARACTER_LIST = "characterList"
+    const val CHARACTER_DETAIL = "characterDetail"
 }

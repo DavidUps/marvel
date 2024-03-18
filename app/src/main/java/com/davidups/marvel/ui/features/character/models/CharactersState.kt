@@ -8,4 +8,3 @@ data class CharactersState(
     val characters: CharactersView? = null
 )
 
-

@@ -44,13 +44,13 @@ fun CharacterItem(image: String, name: String, description: String, onItemClick:
             mutableStateOf(false)
         }
         AsyncImage(
-            ImageRequest.Builder(LocalContext.current).data(image).crossfade(true).build(),
-            stringResource(R.string.character_image),
-            Modifier
+            model = ImageRequest.Builder(LocalContext.current).data(image).crossfade(true).build(),
+            contentDescription = stringResource(R.string.character_image),
+            modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clip(RoundedCornerShape(8.dp)),
-            painterResource(id = R.drawable.ic_launcher_background),
+            placeholder = painterResource(id = R.drawable.ic_launcher_background),
             contentScale = ContentScale.Crop,
         )
         Text(
