@@ -29,9 +29,6 @@ To run this project, you'll need to clone the repository and open it in Android 
 
 ### Installation
 1. Clone the repository:
-   ```
-   git clone https://github.com/DavidUps/marvel.git
-   ```
 2. Open the project in Android Studio.
 3. Add your Marvel API keys in `apikeys.properties`.
 4. Sync the project and wait for Android Studio to resolve dependencies.

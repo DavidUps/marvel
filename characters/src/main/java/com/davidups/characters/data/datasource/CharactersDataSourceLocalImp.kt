@@ -14,10 +14,10 @@ class CharactersDataSourceLocalImp @Inject constructor(
 
     override suspend fun getCharacters() = runCatching {
         local.getCharacters()
-    }.map { charactersLocal ->
-        Either.Right(success = charactersLocal)
+    }.map {
+        Either.Right(it)
     }.getOrElse {
-        Either.Left(error = Failure.Throwable(it))
+        Either.Left(Failure.Throwable(it))
     }
 
     override suspend fun saveCharacters(characters: CharactersLocalEntity) {
@@ -32,10 +32,10 @@ class CharactersDataSourceLocalImp @Inject constructor(
     }
 
     override suspend fun getOffset(): Either<Failure, Int> {
-        local.getOffset()?.let { offset ->
-            return Either.Right(success = offset)
+        return local.getOffset()?.let { offset ->
+            Either.Right(success = offset)
         } ?: run {
-            return Either.Left(error = Failure.Throwable(Throwable(message = Constants.Error.DATABASE_ERROR)))
+            Either.Left(error = Failure.Throwable(Throwable(message = Constants.Error.DATABASE_ERROR)))
         }
     }
 }

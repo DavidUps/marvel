@@ -55,9 +55,11 @@ class CharactersRepositoryImpTest {
             val charactersLocal = Either.Right(success = null)
             val charactersService = Either.Right(success = mockCharactersServiceData())
             whenever(
+                mockCharactersDataSourceLocal.getOffset()
+            ).thenReturn(Either.Right(success = 0))
+            whenever(
                 mockCharactersDataSourceLocal.getCharacters()
             ).thenReturn(charactersLocal)
-
             whenever(
                 mockCharactersDataSourceService.getCharacters(
                     fromPagination = false,
