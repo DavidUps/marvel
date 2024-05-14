@@ -11,6 +11,7 @@ import com.davidups.characters.domain.repository.CharactersRepository
 import com.davidups.core.exception.Failure
 import com.davidups.core.extensions.empty
 import com.davidups.core.extensions.flatMap
+import com.davidups.core.extensions.flatMapLeft
 import com.davidups.core.extensions.orEmpty
 import com.davidups.core.functional.Either
 import javax.inject.Inject
