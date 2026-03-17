@@ -7,10 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.davidups.marvel.R
 import com.davidups.marvel.ui.features.character.models.CharacterView
-import com.davidups.marvel.ui.features.character.models.CharactersState
+import com.davidups.marvel.ui.features.character.models.CharactersUiState
 
 @Composable
-fun CharactersList(state: CharactersState, onItemClick: (CharacterView) -> Unit) {
+fun CharactersList(state: CharactersUiState, onItemClick: (CharacterView) -> Unit) {
     if (state.characters?.results.isNullOrEmpty()) {
         Text(text = stringResource(R.string.no_characters_found))
     } else {

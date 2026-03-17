@@ -11,8 +11,6 @@ import com.davidups.characters.data.repository.CharactersRepositoryImp
 import com.davidups.characters.data.service.CharacterApi
 import com.davidups.characters.data.service.CharacterService
 import com.davidups.characters.domain.repository.CharactersRepository
-import com.davidups.characters.domain.usecases.GetCharacterUseCase
-import com.davidups.characters.domain.usecases.GetCharactersUseCaseImp
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,7 +21,7 @@ import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+object CharactersDataModule {
 
     @Provides
     @Singleton
@@ -49,26 +47,14 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideCharacterRepository(
-        local: CharactersDataSourceLocal,
-        service: CharactersDataSourceService,
-    ): CharactersRepository {
-        return CharactersRepositoryImp(
-            local = local,
-            service = service,
-        )
-    }
-
-    @Provides
-    @Singleton
     fun provideApi(retrofit: Retrofit): CharacterApi = retrofit.create(CharacterApi::class.java)
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class DomainModule {
+abstract class CharactersRepositoryModule {
 
     @Binds
     @Singleton
-    abstract fun provideGetCharacterUseCase(imp: GetCharactersUseCaseImp): GetCharacterUseCase
+    abstract fun bindCharactersRepository(impl: CharactersRepositoryImp): CharactersRepository
 }
