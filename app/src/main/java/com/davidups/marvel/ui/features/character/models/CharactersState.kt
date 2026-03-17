@@ -1,10 +1,8 @@
 package com.davidups.marvel.ui.features.character.models
 
-import androidx.annotation.StringRes
-
-data class CharactersState(
+data class CharactersUiState(
     val isLoading: Boolean = false,
-    @StringRes val error: Int? = null,
-    val characters: CharactersView? = null
+    val error: String? = null,
+    val characters: CharactersView? = null,
 )
 

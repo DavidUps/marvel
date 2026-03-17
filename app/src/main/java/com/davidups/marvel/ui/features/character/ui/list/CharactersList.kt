@@ -3,33 +3,61 @@ package com.davidups.marvel.ui.features.character.ui.list
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.davidups.core.ui.ObserveEffect
 import com.davidups.design.components.loader.Loader
 import com.davidups.marvel.R
-import com.davidups.marvel.ui.features.character.models.CharacterView
-import com.davidups.marvel.ui.features.character.models.CharactersEvent
-import com.davidups.marvel.ui.features.character.models.CharactersState
-import com.davidups.marvel.ui.features.character.ui.list.components.CharacterItem
+import com.davidups.marvel.core.navigation.NavControllerWrapper.navController
+import com.davidups.marvel.core.navigation.Screen
+import com.davidups.marvel.ui.features.character.models.CharacterDetailNavArgs
+import com.davidups.marvel.ui.features.character.models.CharactersEffect
+import com.davidups.marvel.ui.features.character.models.CharactersIntent
+import com.davidups.marvel.ui.features.character.models.CharactersUiState
 import com.davidups.marvel.ui.features.character.ui.list.components.CharactersList
 import com.davidups.marvel.ui.features.character.viewmodels.CharactersViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 
 @Composable
-fun CharactersList(viewModel: CharactersViewModel) {
+fun CharactersListScreen(
+    viewModel: CharactersViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    ObserveEffect(viewModel.effect) { effect ->
+        when (effect) {
+            is CharactersEffect.NavigateToDetail -> {
+                navController?.navigate(
+                    Screen.CharacterDetail.createRoute(
+                        CharacterDetailNavArgs(effect.character)
+                    )
+                )
+            }
+        }
+    }
+
+    CharactersListContent(
+        uiState = uiState,
+        onIntent = viewModel::onIntent,
+    )
+}
+
+@Composable
+internal fun CharactersListContent(
+    uiState: CharactersUiState,
+    onIntent: (CharactersIntent) -> Unit,
+) {
     Box {
-        val state = viewModel.state
         when {
-            state.isLoading -> {
+            uiState.isLoading -> {
                 Loader(
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -38,21 +66,21 @@ fun CharactersList(viewModel: CharactersViewModel) {
                 )
             }
 
-            state.characters?.results.isNullOrEmpty().not() -> {
+            uiState.characters?.results.isNullOrEmpty().not() -> {
                 CharactersList(
-                    state = viewModel.state,
+                    state = uiState,
                     onItemClick = { character ->
-                        viewModel.event.update { CharactersEvent.ClickCharacterDetail(character) }
+                        onIntent(CharactersIntent.CharacterClicked(character))
                     }
                 )
             }
 
-            state.error != null -> {
+            uiState.error != null -> {
                 Text(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .fillMaxSize(),
-                    text = stringResource(id = state.error),
+                    text = uiState.error,
                     textAlign = TextAlign.Center
                 )
             }
@@ -72,6 +100,9 @@ fun CharactersList(viewModel: CharactersViewModel) {
 
 @Preview
 @Composable
-fun CharactersListPreview() {
-    CharactersList(state = CharactersState(), onItemClick = {})
+fun CharactersListContentPreview() {
+    CharactersListContent(
+        uiState = CharactersUiState(),
+        onIntent = {}
+    )
 }

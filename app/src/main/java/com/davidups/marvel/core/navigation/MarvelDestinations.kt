@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,8 +13,7 @@ import com.davidups.marvel.core.navigation.NavList.CHARACTER_DETAIL
 import com.davidups.marvel.core.navigation.NavList.CHARACTER_LIST
 import com.davidups.marvel.ui.features.character.models.CharacterDetailNavArgs
 import com.davidups.marvel.ui.features.character.ui.detail.CharacterDetail
-import com.davidups.marvel.ui.features.character.ui.list.CharactersList
-import com.davidups.marvel.ui.features.character.viewmodels.CharactersViewModel
+import com.davidups.marvel.ui.features.character.ui.list.CharactersListScreen
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToJsonElement
 
@@ -30,7 +28,7 @@ fun MarvelNavigation(
         modifier = modifier
     ) {
         composable(route = Screen.CharacterList.route) {
-            CharactersList(viewModel = hiltViewModel<CharactersViewModel>())
+            CharactersListScreen()
         }
         composable(
             route = Screen.CharacterDetail.route,

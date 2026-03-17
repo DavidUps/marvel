@@ -1,9 +1,8 @@
 package com.davidups.core.exception
 
 sealed class Failure {
-    object NetworkConnection : Failure()
-    class ServerError(val errorCode: Int, val message: String) : Failure()
-
+    data object NetworkConnection : Failure()
+    data class ServerError(val errorCode: Int, val message: String) : Failure()
     data class Throwable(val throwable: kotlin.Throwable?) : Failure()
     data class CustomError(val errorCode: Int, val errorMessage: String?) : Failure()
 }

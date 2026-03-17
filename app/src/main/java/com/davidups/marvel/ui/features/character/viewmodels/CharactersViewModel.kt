@@ -1,90 +1,87 @@
 package com.davidups.marvel.ui.features.character.viewmodels
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.davidups.characters.domain.usecases.GetCharacterUseCase
+import com.davidups.characters.domain.usecases.GetCharactersUseCase
 import com.davidups.core.exception.Failure
-import com.davidups.core.extensions.cancelIfActive
 import com.davidups.core.extensions.onFailure
 import com.davidups.core.extensions.onSuccess
-import com.davidups.marvel.R
-import com.davidups.marvel.core.navigation.NavControllerWrapper.navController
-import com.davidups.marvel.core.navigation.Screen
-import com.davidups.marvel.ui.features.character.models.CharacterDetailNavArgs
-import com.davidups.marvel.ui.features.character.models.CharacterView
-import com.davidups.marvel.ui.features.character.models.CharactersEvent
-import com.davidups.marvel.ui.features.character.models.CharactersState
+import com.davidups.marvel.ui.features.character.models.CharactersEffect
+import com.davidups.marvel.ui.features.character.models.CharactersIntent
+import com.davidups.marvel.ui.features.character.models.CharactersUiState
 import com.davidups.marvel.ui.features.character.models.toView
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CharactersViewModel @Inject constructor(
-    private val getCharacters: GetCharacterUseCase,
+    private val getCharactersUseCase: GetCharactersUseCase,
 ) : ViewModel() {
 
-    private var getCharactersJob: Job? = null
+    private val _uiState = MutableStateFlow(CharactersUiState())
+    val uiState: StateFlow<CharactersUiState> = _uiState.asStateFlow()
 
-    var state by mutableStateOf(CharactersState())
-        private set
-
-    var event = MutableStateFlow<CharactersEvent>(CharactersEvent.GetCharacters(false))
-        private set
+    private val _effect = Channel<CharactersEffect>(Channel.BUFFERED)
+    val effect: Flow<CharactersEffect> = _effect.receiveAsFlow()
 
     init {
-        dispatch()
+        onIntent(CharactersIntent.LoadCharacters(fromPagination = false))
     }
 
-    private fun dispatch() {
+    fun onIntent(intent: CharactersIntent) {
+        when (intent) {
+            is CharactersIntent.LoadCharacters -> loadCharacters(intent.fromPagination)
+            is CharactersIntent.CharacterClicked -> navigateToDetail(intent.character)
+            is CharactersIntent.ErrorDismissed -> reduce { copy(error = null) }
+        }
+    }
+
+    private fun loadCharacters(fromPagination: Boolean) {
         viewModelScope.launch {
-            event.collect {
-                when (it) {
-                    is CharactersEvent.GetCharacters -> getCharacters(it.fromPagination)
-                    is CharactersEvent.ClickCharacterDetail -> navigateToDetail(it.character)
+            reduce { copy(isLoading = true, error = null) }
+
+            getCharactersUseCase(fromPagination)
+                .onSuccess { characters ->
+                    reduce {
+                        copy(
+                            isLoading = false,
+                            characters = characters.toView()
+                        )
+                    }
                 }
-            }
+                .onFailure { failure ->
+                    reduce {
+                        copy(
+                            isLoading = false,
+                            error = failure.toErrorMessage()
+                        )
+                    }
+                }
         }
     }
 
-    private fun getCharacters(fromPagination: Boolean) {
-        getCharactersJob.cancelIfActive()
-        getCharactersJob = viewModelScope.launch {
-            getCharacters.invoke(fromPagination).onStart {
-                state = state.copy(isLoading = true)
-            }.onCompletion {
-                state = state.copy(isLoading = false)
-            }.catch { _ ->
-                state = state.copy(error = R.string.get_characters_error)
-            }.collect { result ->
-                result.onFailure { failure ->
-                    state = state.copy(
-                        error = when (failure) {
-                            is Failure.ServerError, is Failure.Throwable, is Failure.CustomError -> R.string.get_characters_error
-                            Failure.NetworkConnection -> R.string.internet_error
-                        }
-                    )
-                }
-                result.onSuccess { characters ->
-                    state = state.copy(characters = characters.toView())
-                }
-            }
+    private fun navigateToDetail(character: com.davidups.marvel.ui.features.character.models.CharacterView) {
+        viewModelScope.launch {
+            _effect.send(CharactersEffect.NavigateToDetail(character))
         }
     }
 
-    private fun navigateToDetail(character: CharacterView) {
-        navController?.navigate(
-            Screen.CharacterDetail.createRoute(
-                CharacterDetailNavArgs(character)
-            )
-        )
+    private inline fun reduce(block: CharactersUiState.() -> CharactersUiState) {
+        _uiState.update { it.block() }
+    }
+
+    private fun Failure.toErrorMessage(): String = when (this) {
+        is Failure.NetworkConnection -> "No internet connection"
+        is Failure.ServerError -> "Server error: $message"
+        is Failure.Throwable -> "An unexpected error occurred"
+        is Failure.CustomError -> errorMessage ?: "An error occurred"
     }
 }

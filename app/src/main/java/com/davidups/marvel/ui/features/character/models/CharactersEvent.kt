@@ -1,6 +1,7 @@
 package com.davidups.marvel.ui.features.character.models
 
-sealed class CharactersEvent {
-    data class GetCharacters(val fromPagination: Boolean = false) : CharactersEvent()
-    data class ClickCharacterDetail(val character: CharacterView) : CharactersEvent()
+sealed interface CharactersIntent {
+    data class LoadCharacters(val fromPagination: Boolean = false) : CharactersIntent
+    data class CharacterClicked(val character: CharacterView) : CharactersIntent
+    data object ErrorDismissed : CharactersIntent
 }
